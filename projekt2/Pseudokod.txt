@@ -1,0 +1,15 @@
+jag tänker göra en 1v1 auto battler där man kan uppgrader sin karaktär efter en fight
+
+man kommer få en vis mängd guld beroände på om man vinner (10-15 guld) eller förlorar (5-10 guld)
+
+man kommer kunna köpa mellan att få mer (skydd, skada, undiknings chans och hp)
+
+alla saker kommer att kosta samma mängd guld (5-10 guld)
+
+för varge 5 guld man håller får man (1 guld) 
+
+karaktären och spelaren har separata hp poler där spelar hp går ner om karaktären förlorar (30-50 Spelar hp)
+
+man gör mer spelar skada dästo mer guld man spänderar (+1 spelar skada för varge 10-20 guld)
+
+efter spelaren eller fienden förlorar ska spelaren kunna välja att spela igen eller sluta spela
