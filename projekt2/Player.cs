@@ -1,6 +1,6 @@
-namespace Player
+namespace PlayerAndCharacter
 {
-    class player
+    class Player
     {
         public int playerHealth = 50;
         public int playerDamage = 1;
@@ -8,11 +8,11 @@ namespace Player
         public int playerGoldSpent = 0;
     }
 
-    class character
+    class PlayerCharacter
     {
         public int characterHealth = 100;
         public int characterDamage = 5;
         public int characterArmor = 0;
-        public int characterEvaid = 1;
+        public int characterEvade = 1;
     }
 }
