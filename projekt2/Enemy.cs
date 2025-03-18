@@ -2,10 +2,10 @@ namespace EnemyAndCharacter
 {
     class Enemy
     {
-        public int playerHealth = 50;
-        public int playerDamage = 1;
-        public int playerGold = 15;
-        public int playerGoldSpent = 0;
+        public int EnemyHealth = 50;
+        public int EnemyDamage = 1;
+        public int EnemyGold = 15;
+        public int EnemyGoldSpent = 0;
     }
 
     class EnemyCharacter
@@ -13,6 +13,7 @@ namespace EnemyAndCharacter
         public int characterHealth = 100;
         public int characterDamage = 5;
         public int characterArmor = 0;
-        public int characterEvade = 1;
+        public int characterEvadeProbability = Random.Shared.Next(1,101);
+        public int characterEvadeChance = 5;
     }
 }
