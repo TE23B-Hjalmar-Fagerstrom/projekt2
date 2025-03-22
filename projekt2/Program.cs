@@ -6,17 +6,17 @@ PlayerCharacter pc = new();
 Enemy e = new();
 EnemyCharacter ec = new();
 
-shop(p, pc, e);
-// Console.WriteLine("semi-auto battler");
-// Console.WriteLine("");
-// Console.WriteLine("");
-// Console.WriteLine("1.new game   2.Quit");
+Console.WriteLine("semi-auto battler");
+Console.WriteLine("");
+Console.WriteLine("");
+Console.WriteLine("1.new game   2.Quit");
 
-// if (TryParseChois(1, 2) == 1)
-// {
-//     Console.WriteLine("good");
-// }
-// Console.ReadLine();
+if (TryParseChois(1, 2) == 1)
+{
+    Console.WriteLine("good");
+    shop(p, pc, e);
+}
+Console.ReadLine();
 
 static void Game(Player p, PlayerCharacter pc, Enemy e, EnemyCharacter ec)
 {
@@ -38,31 +38,21 @@ static void shop(Player p, PlayerCharacter pc, Enemy e)
 {
     if (p.playerHealth > 0 && e.EnemyHealth > 0)
     {
-        while (TryParseChois(1, 5) != 5)
+        int chois = 0;
+        while (chois != 5)
         {
-            Console.WriteLine("kostnad på allt 10 Guld");
-            Console.WriteLine($"du har {p.playerGold}");
+            Console.WriteLine("kostnad på allt är 10 guld");
+            Console.WriteLine($"du har {p.playerGold} guld");
             Console.WriteLine("");
-            Console.WriteLine("1. uppgradera HP (+10)");
-            Console.WriteLine("2. uppgradera ATK (+5)");
-            Console.WriteLine("3. uppgradera ARMOR (+5)");
-            Console.WriteLine("4. uppgradera EVADE (+5%)");
+            Console.WriteLine($"1. uppgradera HP (+10) aktuell HP ({pc.characterHealth})");
+            Console.WriteLine($"2. uppgradera ATK (+5) aktuell atk ({pc.characterDamage})");
+            Console.WriteLine($"3. uppgradera ARMOR (+5) aktuell ARMOR ({pc.characterArmor})");
+            Console.WriteLine($"4. uppgradera EVADE (+2%) aktuell EVADE ({pc.characterEvadeChance}%)");
+            Console.WriteLine($"5. quit shop");
 
-            int[] uppgradeAmount = { 10, 5, 5, 5 };
-            int[] uppgrade = { pc.characterHealth, pc.characterDamage, pc.characterArmor, pc.characterEvadeChance };
+            chois = TryParseChois(1, 5);
 
-            if (p.playerGold > 10)
-            {
-                for (int i = 0; i < 5; i++)
-                {
-                    if (TryParseChois(1, 5) == i)
-                    {
-                        uppgrade[i] += uppgradeAmount[i];
-                    }
-                }
-            }else{
-                Console.WriteLine("du har inte råd");
-            }
+            buy(p, pc, chois);
         }
     }
 }
@@ -85,7 +75,6 @@ static int eCharacterEvade(PlayerCharacter pc, EnemyCharacter ec)
         ec.characterHealth += pc.characterDamage;
     }
     return ec.characterHealth;
-
 }
 
 static int TryParseChois(int min, int max)
@@ -95,6 +84,34 @@ static int TryParseChois(int min, int max)
     {
         string chois = Console.ReadLine();
         int.TryParse(chois, out choisToNumber);
+        if (choisToNumber < min || choisToNumber > max)
+        {
+            Console.WriteLine($"skriv ett tal mellan {min} och {max}");
+        }
     }
     return choisToNumber;
+}
+
+static int buy(Player p, PlayerCharacter pc, int chois)
+{
+    int[] uppgradeAmount = { 10, 5, 5, 2 };
+    int[] uppgrade = { pc.characterHealth, pc.characterDamage, pc.characterArmor, pc.characterEvadeChance };
+
+    if (p.playerGold > 10)
+    {
+        for (int i = 0; i < 5; i++)
+        {
+            if (chois == i)
+            {
+                uppgrade[i] += uppgradeAmount[i];
+                return p.playerGold -= 10;
+            }
+        }
+        return uppgrade[chois];
+    }
+    else
+    {
+        Console.WriteLine("du har inte råd");
+    }
+    return p.playerGoldSpent += 10;
 }
