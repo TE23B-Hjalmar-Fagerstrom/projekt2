@@ -1,19 +1,18 @@
 namespace PlayerAndCharacter
 {
-    class Player
+    public class Player
     {
-        public int playerHealth = 50;
-        public int playerDamage = 1;
-        public int playerGold = 15;
-        public int playerGoldSpent = 0;
+        public int PlayerHealth = 50;
+        public int PlayerDamage = 1;
+        public int PlayerGold = 15;
+        public int PlayerGoldSpent = 0;
     }
-
-    class PlayerCharacter
+    public class PlayerCharacter
     {
-        public int characterHealth = 100;
-        public int characterDamage = 5;
-        public int characterArmor = 0;
-        public int characterEvadeProbability = Random.Shared.Next(1,101);
-        public int characterEvadeChance = 5;
+        public int CharacterHealth = 100;
+        public int CharacterDamage = 5;
+        public int CharacterArmor = 0;
+        public int CharacterEvadeProbability = Random.Shared.Next(1,101);
+        public int CharacterEvadeChance = 5;
     }
 }

@@ -1,6 +1,6 @@
 namespace EnemyAndCharacter
 {
-    class Enemy
+    public class Enemy
     {
         public int EnemyHealth = 50;
         public int EnemyDamage = 1;
@@ -8,12 +8,12 @@ namespace EnemyAndCharacter
         public int EnemyGoldSpent = 0;
     }
 
-    class EnemyCharacter
+    public class EnemyCharacter
     {
-        public int characterHealth = 100;
-        public int characterDamage = 5;
-        public int characterArmor = 0;
-        public int characterEvadeProbability = Random.Shared.Next(1,101);
-        public int characterEvadeChance = 5;
+        public int CharacterHealth = 100;
+        public int CharacterDamage = 5;
+        public int CharacterArmor = 0;
+        public int CharacterEvadeProbability = Random.Shared.Next(1,101);
+        public int CharacterEvadeChance = 5;
     }
 }

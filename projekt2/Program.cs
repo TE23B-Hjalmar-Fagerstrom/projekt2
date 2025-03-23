@@ -15,12 +15,13 @@ if (TryParseChois(1, 2) == 1)
 {
     Console.WriteLine("good");
     shop(p, pc, e);
+    Console.WriteLine($"{pc.CharacterHealth}");
 }
 Console.ReadLine();
 
 static void Game(Player p, PlayerCharacter pc, Enemy e, EnemyCharacter ec)
 {
-    while (p.playerHealth > 0 && e.EnemyHealth > 0)
+    while (p.PlayerHealth > 0 && e.EnemyHealth > 0)
     {
 
     }
@@ -28,53 +29,52 @@ static void Game(Player p, PlayerCharacter pc, Enemy e, EnemyCharacter ec)
 
 static void Fighet(PlayerCharacter pc, EnemyCharacter ec)
 {
-    while (pc.characterHealth > 0 && ec.characterHealth > 0)
+    while (pc.CharacterHealth > 0 && ec.CharacterHealth > 0)
     {
 
     }
 }
 
-static void shop(Player p, PlayerCharacter pc, Enemy e)
+static (int, int, int) shop(Player p, PlayerCharacter pc, Enemy e)
 {
-    if (p.playerHealth > 0 && e.EnemyHealth > 0)
+    int chois = 0;
+    if (p.PlayerHealth > 0 && e.EnemyHealth > 0)
     {
-        int chois = 0;
         while (chois != 5)
         {
             Console.WriteLine("kostnad på allt är 10 guld");
-            Console.WriteLine($"du har {p.playerGold} guld");
+            Console.WriteLine($"du har {p.PlayerGold} guld");
             Console.WriteLine("");
-            Console.WriteLine($"1. uppgradera HP (+10) aktuell HP ({pc.characterHealth})");
-            Console.WriteLine($"2. uppgradera ATK (+5) aktuell atk ({pc.characterDamage})");
-            Console.WriteLine($"3. uppgradera ARMOR (+5) aktuell ARMOR ({pc.characterArmor})");
-            Console.WriteLine($"4. uppgradera EVADE (+2%) aktuell EVADE ({pc.characterEvadeChance}%)");
+            Console.WriteLine($"1. uppgradera HP (+10) aktuell HP ({pc.CharacterHealth})");
+            Console.WriteLine($"2. uppgradera ATK (+5) aktuell atk ({pc.CharacterDamage})");
+            Console.WriteLine($"3. uppgradera ARMOR (+5) aktuell ARMOR ({pc.CharacterArmor})");
+            Console.WriteLine($"4. uppgradera EVADE (+2%) aktuell EVADE ({pc.CharacterEvadeChance}%)");
             Console.WriteLine($"5. quit shop");
 
             chois = TryParseChois(1, 5);
-
-            buy(p, pc, chois);
         }
     }
+    return buy(p, pc, chois);
 }
 
 static int pCharacterEvade(PlayerCharacter pc, EnemyCharacter ec)
 {
-    if (pc.characterEvadeProbability < pc.characterEvadeChance)
+    if (pc.CharacterEvadeProbability < pc.CharacterEvadeChance)
     {
         Console.WriteLine("du undvek fiendens attack");
-        pc.characterHealth += ec.characterDamage;
+        pc.CharacterHealth += ec.CharacterDamage;
     }
-    return pc.characterHealth;
+    return pc.CharacterHealth;
 }
 
 static int eCharacterEvade(PlayerCharacter pc, EnemyCharacter ec)
 {
-    if (ec.characterEvadeProbability < ec.characterEvadeChance)
+    if (ec.CharacterEvadeProbability < ec.CharacterEvadeChance)
     {
         Console.WriteLine("fienden undvek din attack");
-        ec.characterHealth += pc.characterDamage;
+        ec.CharacterHealth += pc.CharacterDamage;
     }
-    return ec.characterHealth;
+    return ec.CharacterHealth;
 }
 
 static int TryParseChois(int min, int max)
@@ -92,26 +92,25 @@ static int TryParseChois(int min, int max)
     return choisToNumber;
 }
 
-static int buy(Player p, PlayerCharacter pc, int chois)
+static (int, int, int) buy(Player p, PlayerCharacter pc, int chois)
 {
     int[] uppgradeAmount = { 10, 5, 5, 2 };
-    int[] uppgrade = { pc.characterHealth, pc.characterDamage, pc.characterArmor, pc.characterEvadeChance };
+    int[] uppgrade = { pc.CharacterHealth, pc.CharacterDamage, pc.CharacterArmor, pc.CharacterEvadeChance, pc.CharacterEvadeProbability };
 
-    if (p.playerGold > 10)
+    if (p.PlayerGold >= 10 && chois != 5)
     {
-        for (int i = 0; i < 5; i++)
+        for (int i = 0; i < 4; i++)
         {
             if (chois == i)
             {
-                uppgrade[i] += uppgradeAmount[i];
-                return p.playerGold -= 10;
+                uppgrade[i-1] += uppgradeAmount[i-1];
+                p.PlayerGold -= 10; p.PlayerGoldSpent += 10;
             }
         }
-        return uppgrade[chois];
     }
-    else
+    else if (p.PlayerGold < 10 && chois != 5)
     {
         Console.WriteLine("du har inte råd");
     }
-    return p.playerGoldSpent += 10;
+    return (p.PlayerGold, uppgrade[chois-1], p.PlayerGoldSpent);
 }
