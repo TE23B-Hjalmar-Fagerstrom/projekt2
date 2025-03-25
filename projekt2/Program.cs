@@ -1,5 +1,6 @@
 ﻿using PlayerAndCharacter;
 using EnemyAndCharacter;
+using System.Reflection;
 
 Player p = new();
 PlayerCharacter pc = new();
@@ -52,9 +53,10 @@ static (int, int, int) shop(Player p, PlayerCharacter pc, Enemy e)
             Console.WriteLine($"5. quit shop");
 
             chois = TryParseChois(1, 5);
+            (p.PlayerGold, pc.CharacterHealth, p.PlayerGoldSpent) = buy(p, pc, chois);
         }
     }
-    return buy(p, pc, chois);
+    return (p.PlayerGold, pc.CharacterHealth, p.PlayerGoldSpent);
 }
 
 static int pCharacterEvade(PlayerCharacter pc, EnemyCharacter ec)
@@ -104,7 +106,8 @@ static (int, int, int) buy(Player p, PlayerCharacter pc, int chois)
             if (chois == i)
             {
                 uppgrade[i-1] += uppgradeAmount[i-1];
-                p.PlayerGold -= 10; p.PlayerGoldSpent += 10;
+                p.PlayerGold -= 10;
+                p.PlayerGoldSpent += 10;
             }
         }
     }
