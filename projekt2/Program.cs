@@ -15,8 +15,10 @@ Console.WriteLine("1.new game   2.Quit");
 if (TryParseChois(1, 2) == 1)
 {
     Console.WriteLine("good");
-    shop(p, pc, e);
+    shop(ref p, ref pc, ref e);
     Console.WriteLine($"{pc.CharacterHealth}");
+    Console.WriteLine($"{p.PlayerGold}");
+    Console.WriteLine($"{p.PlayerGoldSpent}");
 }
 Console.ReadLine();
 
@@ -36,7 +38,7 @@ static void Fighet(PlayerCharacter pc, EnemyCharacter ec)
     }
 }
 
-static (int, int, int) shop(Player p, PlayerCharacter pc, Enemy e)
+static void shop(ref Player p, ref PlayerCharacter pc, ref Enemy e)
 {
     int chois = 0;
     if (p.PlayerHealth > 0 && e.EnemyHealth > 0)
@@ -53,10 +55,9 @@ static (int, int, int) shop(Player p, PlayerCharacter pc, Enemy e)
             Console.WriteLine($"5. quit shop");
 
             chois = TryParseChois(1, 5);
-            (p.PlayerGold, pc.CharacterHealth, p.PlayerGoldSpent) = buy(p, pc, chois);
+            buy(ref p, ref pc, ref chois);
         }
     }
-    return (p.PlayerGold, pc.CharacterHealth, p.PlayerGoldSpent);
 }
 
 static int pCharacterEvade(PlayerCharacter pc, EnemyCharacter ec)
@@ -94,12 +95,13 @@ static int TryParseChois(int min, int max)
     return choisToNumber;
 }
 
-static (int, int, int) buy(Player p, PlayerCharacter pc, int chois)
+static int buy(ref Player p, ref PlayerCharacter pc, ref int chois)
 {
+    // ta bort aray och läg till 4 olicka if satser istället (sålänge)
     int[] uppgradeAmount = { 10, 5, 5, 2 };
     int[] uppgrade = { pc.CharacterHealth, pc.CharacterDamage, pc.CharacterArmor, pc.CharacterEvadeChance, pc.CharacterEvadeProbability };
 
-    if (p.PlayerGold >= 10 && chois != 5)
+    if (chois != 5)
     {
         for (int i = 0; i < 4; i++)
         {
@@ -115,5 +117,5 @@ static (int, int, int) buy(Player p, PlayerCharacter pc, int chois)
     {
         Console.WriteLine("du har inte råd");
     }
-    return (p.PlayerGold, uppgrade[chois-1], p.PlayerGoldSpent);
+    return uppgrade[chois-1];
 }
