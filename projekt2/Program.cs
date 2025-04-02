@@ -1,6 +1,5 @@
 ﻿using PlayerAndCharacter;
 using EnemyAndCharacter;
-using System.Reflection;
 
 Player p = new();
 PlayerCharacter pc = new();
@@ -15,10 +14,8 @@ Console.WriteLine("1.new game   2.Quit");
 if (TryParseChois(1, 2) == 1)
 {
     Console.WriteLine("good");
-    shop(ref p, ref pc, ref e);
+    Shop(ref p, ref pc, ref e);
     Console.WriteLine($"{pc.CharacterHealth}");
-    Console.WriteLine($"{p.PlayerGold}");
-    Console.WriteLine($"{p.PlayerGoldSpent}");
 }
 Console.ReadLine();
 
@@ -26,11 +23,13 @@ static void Game(Player p, PlayerCharacter pc, Enemy e, EnemyCharacter ec)
 {
     while (p.PlayerHealth > 0 && e.EnemyHealth > 0)
     {
-
+        Fighet(ref p, pc, ref e, ec);
+        Shop(ref p, ref pc, ref e);
+        Interest(ref p, ref e);
     }
 }
 
-static void Fighet(PlayerCharacter pc, EnemyCharacter ec)
+static void Fighet(ref Player p, PlayerCharacter pc, ref Enemy e, EnemyCharacter ec)
 {
     while (pc.CharacterHealth > 0 && ec.CharacterHealth > 0)
     {
@@ -38,7 +37,7 @@ static void Fighet(PlayerCharacter pc, EnemyCharacter ec)
     }
 }
 
-static void shop(ref Player p, ref PlayerCharacter pc, ref Enemy e)
+static void Shop(ref Player p, ref PlayerCharacter pc, ref Enemy e)
 {
     int chois = 0;
     if (p.PlayerHealth > 0 && e.EnemyHealth > 0)
@@ -55,12 +54,12 @@ static void shop(ref Player p, ref PlayerCharacter pc, ref Enemy e)
             Console.WriteLine($"5. quit shop");
 
             chois = TryParseChois(1, 5);
-            buy(ref p, ref pc, ref chois);
+            Buy(ref p, ref pc, ref chois);
         }
     }
 }
 
-static int pCharacterEvade(PlayerCharacter pc, EnemyCharacter ec)
+static int PCharacterEvade(PlayerCharacter pc, EnemyCharacter ec)
 {
     if (pc.CharacterEvadeProbability < pc.CharacterEvadeChance)
     {
@@ -70,7 +69,7 @@ static int pCharacterEvade(PlayerCharacter pc, EnemyCharacter ec)
     return pc.CharacterHealth;
 }
 
-static int eCharacterEvade(PlayerCharacter pc, EnemyCharacter ec)
+static int ECharacterEvade(PlayerCharacter pc, EnemyCharacter ec)
 {
     if (ec.CharacterEvadeProbability < ec.CharacterEvadeChance)
     {
@@ -95,27 +94,39 @@ static int TryParseChois(int min, int max)
     return choisToNumber;
 }
 
-static int buy(ref Player p, ref PlayerCharacter pc, ref int chois)
+static void Buy(ref Player p, ref PlayerCharacter pc, ref int chois)
 {
-    // ta bort aray och läg till 4 olicka if satser istället (sålänge)
-    int[] uppgradeAmount = { 10, 5, 5, 2 };
-    int[] uppgrade = { pc.CharacterHealth, pc.CharacterDamage, pc.CharacterArmor, pc.CharacterEvadeChance, pc.CharacterEvadeProbability };
-
-    if (chois != 5)
+    if (chois != 5 && p.PlayerGold >= 10)
     {
-        for (int i = 0; i < 4; i++)
+        switch (chois) // chatGPT: jag frågade om den kunde göra en mindre if-sats fyld lösning 
         {
-            if (chois == i)
-            {
-                uppgrade[i-1] += uppgradeAmount[i-1];
-                p.PlayerGold -= 10;
-                p.PlayerGoldSpent += 10;
-            }
+            case 1: pc.CharacterHealth += 10; break;
+            case 2: pc.CharacterDamage += 5; break;
+            case 3: pc.CharacterArmor += 5; break;
+            case 4: pc.CharacterEvadeChance += 2; break;
         }
+        p.PlayerGold -= 10;
+        p.PlayerGoldSpent += 10;
     }
     else if (p.PlayerGold < 10 && chois != 5)
     {
         Console.WriteLine("du har inte råd");
+        Console.ReadLine();
     }
-    return uppgrade[chois-1];
+}
+
+static void Interest(ref Player p, ref Enemy e)
+{
+    for (int i = 0; i < 10; i++)
+    {
+        if (p.PlayerGold / 10 == i)
+        {
+            p.PlayerGold += 1 * i;
+        }
+
+        if (e.EnemyGold / 10 == i)
+        {
+            e.EnemyGold += 1 * i;
+        }
+    }
 }

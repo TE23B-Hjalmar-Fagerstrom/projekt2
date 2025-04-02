@@ -12,7 +12,7 @@ namespace PlayerAndCharacter
         public int CharacterHealth = 100;
         public int CharacterDamage = 5;
         public int CharacterArmor = 0;
-        public int CharacterEvadeProbability = Random.Shared.Next(1,101);
+        public int CharacterEvadeProbability => Random.Shared.Next(1, 101);
         public int CharacterEvadeChance = 5;
     }
 }
