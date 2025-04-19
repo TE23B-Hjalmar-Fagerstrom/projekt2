@@ -6,8 +6,6 @@ PlayerCharacter pc = new();
 Enemy e = new();
 EnemyCharacter ec = new();
 
-
-
 int playAgain = 0;
 
 while (playAgain != 2)
@@ -29,60 +27,66 @@ static void Game(Player p, PlayerCharacter pc, Enemy e, EnemyCharacter ec)
 {
     while (p.PlayerHealth > 0 && e.EnemyHealth > 0)
     {
+        Space();
         Fighet(ref p, pc, ref e, ec);
-        Shop(ref p, ref pc, ref e);
         EnemySpending(p, ref e, ref ec);
+        Shop(ref p, ref pc, ref e);
         Interest(ref p, ref e);
     }
 }
 
 static void Fighet(ref Player p, PlayerCharacter pc, ref Enemy e, EnemyCharacter ec)
 {
+    pc.CharacterHealth = pc.CharacterMaxHealth;
+    ec.CharacterHealth = ec.CharacterMaxHealth;
     while (pc.CharacterHealth > 0 && ec.CharacterHealth > 0)
     {
-        PlayerTurn(ref pc, ref ec);
+        Space();
+        pc.CharacterHealth = EnemyTurn(pc, ec);
         Console.WriteLine();
-        EnemyTurn(ref pc, ref ec);
+        ec.CharacterHealth = PlayerTurn(pc, ec);
         Console.ReadLine();
 
-        if (pc.CharacterHealth > 0)
+        if (pc.CharacterHealth > 0 && ec.CharacterHealth <= 0)
         {
             PlayerWin(ref p, ref e);
         }
-        else
+        else if (pc.CharacterHealth <= 0 && ec.CharacterHealth > 0)
         {
             EnemyWin(ref p, ref e);
         }
     }
 }
 
-static void PlayerTurn(ref PlayerCharacter pc, ref EnemyCharacter ec)
+static int PlayerTurn(PlayerCharacter pc, EnemyCharacter ec)
 {
     if (pc.CharacterHealth > 0 && ec.CharacterHealth > 0)
     {
         ec.CharacterHealth -= pc.CharacterDamage - ec.CharacterArmor;
-        PCharacterEvade(ref pc, ec, out int evade);
+        ec.CharacterHealth = ECharacterEvade(pc, ec, out int evade);
         if (evade == 0)
         {
             Console.WriteLine($"Du träfade fiendens gube och den har {ec.CharacterHealth} HP kvar");
         }
     }
+    return ec.CharacterHealth;
 }
 
-static void EnemyTurn(ref PlayerCharacter pc, ref EnemyCharacter ec)
+static int EnemyTurn(PlayerCharacter pc, EnemyCharacter ec)
 {
     if (pc.CharacterHealth > 0 && ec.CharacterHealth > 0)
     {
         pc.CharacterHealth -= ec.CharacterDamage - pc.CharacterArmor;
-        ECharacterEvade(pc, ref ec, out int evade);
+        pc.CharacterHealth = PCharacterEvade(pc, ec, out int evade);
         if (evade == 0)
         {
             Console.WriteLine($"Fienden träfade din gube och den har {pc.CharacterHealth} HP kvar");
         }
     }
+    return pc.CharacterHealth;
 }
 
-static void PCharacterEvade(ref PlayerCharacter pc, EnemyCharacter ec, out int evade) // kollar om spelaren undvek
+static int PCharacterEvade(PlayerCharacter pc, EnemyCharacter ec, out int evade) // kollar om spelaren undvek
 {
     evade = 0;
     if (pc.CharacterEvadeProbability < pc.CharacterEvadeChance)
@@ -91,9 +95,10 @@ static void PCharacterEvade(ref PlayerCharacter pc, EnemyCharacter ec, out int e
         pc.CharacterHealth += ec.CharacterDamage - pc.CharacterArmor;
         evade = 1;
     }
+    return pc.CharacterHealth;
 }
 
-static void ECharacterEvade(PlayerCharacter pc, ref EnemyCharacter ec, out int evade) // kollar om fienden undvek
+static int ECharacterEvade(PlayerCharacter pc, EnemyCharacter ec, out int evade) // kollar om fienden undvek
 {
     evade = 0;
     if (ec.CharacterEvadeProbability < ec.CharacterEvadeChance)
@@ -102,6 +107,7 @@ static void ECharacterEvade(PlayerCharacter pc, ref EnemyCharacter ec, out int e
         ec.CharacterHealth += pc.CharacterDamage - ec.CharacterArmor;
         evade = 1;
     }
+    return ec.CharacterHealth;
 }
 
 static void PlayerWin(ref Player p, ref Enemy e)
@@ -109,12 +115,13 @@ static void PlayerWin(ref Player p, ref Enemy e)
     int damageUpgrade = 0;
     for (int i = 1; i <= 25; i++)
     {
-        if (p.PlayerGoldSpent / 20 >= i)
+        if ((p.PlayerGoldSpent / (40 * p.PlayerDamage)) >= i)
         {
-            damageUpgrade += 1;
+            damageUpgrade ++;
+            p.PlayerDamage += damageUpgrade;
         }
     }
-    e.EnemyHealth -= p.PlayerDamage + damageUpgrade;
+    e.EnemyHealth -= p.PlayerDamage;
 
     p.PlayerGold += 15;
     e.EnemyGold += 10;
@@ -123,14 +130,15 @@ static void PlayerWin(ref Player p, ref Enemy e)
 static void EnemyWin(ref Player p, ref Enemy e)
 {
     int damageUpgrade = 0;
-    for (int i = 1; i <= 25; i++)
+    for (int i = 1; i <= 30; i++)
     {
-        if (e.EnemyGoldSpent / 20 >= i)
+        if ((e.EnemyGoldSpent / (40 * e.EnemyDamage)) >= i)
         {
-            damageUpgrade += 1;
+            damageUpgrade ++;
+            e.EnemyDamage += damageUpgrade;
         }
     }
-    p.PlayerHealth -= e.EnemyDamage + damageUpgrade;
+    p.PlayerHealth -= e.EnemyDamage;
 
     p.PlayerGold += 10;
     e.EnemyGold += 15;
@@ -143,11 +151,14 @@ static void Shop(ref Player p, ref PlayerCharacter pc, ref Enemy e)
     {
         while (chois != 5)
         {
-            Console.WriteLine(""); // skriv utt spelar och enemy helth
+            Space();
+            Console.WriteLine($"Ditt HP {p.PlayerHealth} och ATK {p.PlayerDamage}"); // skriv utt spelar health
+            Console.WriteLine($"fiendens HP {e.EnemyHealth} och ATK {e.EnemyDamage}"); // skriv utt enemy health
+            Console.WriteLine("");
             Console.WriteLine("kostnad på allt är 10 guld");
             Console.WriteLine($"du har {p.PlayerGold} guld");
             Console.WriteLine("");
-            Console.WriteLine($"1. uppgradera HP (+10) aktuell HP ({pc.CharacterHealth})");
+            Console.WriteLine($"1. uppgradera HP (+10) aktuell HP ({pc.CharacterMaxHealth})");
             Console.WriteLine($"2. uppgradera ATK (+5) aktuell ATK ({pc.CharacterDamage})");
             Console.WriteLine($"3. uppgradera ARMOR (+5) aktuell ARMOR ({pc.CharacterArmor})");
             Console.WriteLine($"4. uppgradera EVADE (+2%) aktuell EVADE ({pc.CharacterEvadeChance}%)");
@@ -165,7 +176,7 @@ static void Buy(ref Player p, ref PlayerCharacter pc, ref int chois)
     {
         switch (chois) // ChatGPT: jag frågade om den kunde göra en mindre if-sats fyld lösning 
         {
-            case 1: pc.CharacterHealth += 10; break;
+            case 1: pc.CharacterMaxHealth += 10; break;
             case 2: pc.CharacterDamage += 5; break;
             case 3: pc.CharacterArmor += 5; break;
             case 4: pc.CharacterEvadeChance += 2; break;
@@ -182,13 +193,13 @@ static void Buy(ref Player p, ref PlayerCharacter pc, ref int chois)
 
 static void EnemySpending(Player p, ref Enemy e, ref EnemyCharacter ec)
 {
-    while (e.EnemyGold >= 110 && e.EnemyHealth - p.PlayerDamage > 0 || e.EnemyGold >= 10 && e.EnemyHealth - p.PlayerDamage <= 0)
+    while (e.EnemyGold >= 110 && (e.EnemyHealth - p.PlayerDamage) > 0 || e.EnemyGold >= 10 && (e.EnemyHealth - p.PlayerDamage) <= 0)
     {
         int random = Random.Shared.Next(1, 5);
 
         switch (random)
         {
-            case 1: ec.CharacterHealth += 10; break;
+            case 1: ec.CharacterMaxHealth += 10; break;
             case 2: ec.CharacterDamage += 5; break;
             case 3: ec.CharacterArmor += 5; break;
             case 4: ec.CharacterEvadeChance += 2; break;
@@ -227,4 +238,12 @@ static int TryParseChois(int min, int max)
         }
     }
     return choisToNumber;
+}
+
+static void Space ()
+{
+    for (int i = 0; i < 5; i++)
+    {
+        Console.WriteLine(""); 
+    }
 }
