@@ -1,15 +1,17 @@
 ﻿using PlayerAndCharacter;
 using EnemyAndCharacter;
 
-Player p = new();
-PlayerCharacter pc = new();
-Enemy e = new();
-EnemyCharacter ec = new();
-
 int playAgain = 0;
 
 while (playAgain != 2)
 {
+
+    Player p = new();
+    PlayerCharacter pc = new();
+    Enemy e = new();
+    EnemyCharacter ec = new();
+
+    Space(10);
     Console.WriteLine("semi-auto battler");
     Console.WriteLine("");
     Console.WriteLine("");
@@ -27,7 +29,7 @@ static void Game(Player p, PlayerCharacter pc, Enemy e, EnemyCharacter ec)
 {
     while (p.PlayerHealth > 0 && e.EnemyHealth > 0)
     {
-        Space();
+        Space(5);
         Fighet(ref p, pc, ref e, ec);
         EnemySpending(p, ref e, ref ec);
         Shop(ref p, ref pc, ref e);
@@ -41,7 +43,7 @@ static void Fighet(ref Player p, PlayerCharacter pc, ref Enemy e, EnemyCharacter
     ec.CharacterHealth = ec.CharacterMaxHealth;
     while (pc.CharacterHealth > 0 && ec.CharacterHealth > 0)
     {
-        Space();
+        Space(10);
         pc.CharacterHealth = EnemyTurn(pc, ec);
         Console.WriteLine();
         ec.CharacterHealth = PlayerTurn(pc, ec);
@@ -112,15 +114,6 @@ static int ECharacterEvade(PlayerCharacter pc, EnemyCharacter ec, out int evade)
 
 static void PlayerWin(ref Player p, ref Enemy e)
 {
-    int damageUpgrade = 0;
-    for (int i = 1; i <= 25; i++)
-    {
-        if ((p.PlayerGoldSpent / (40 * p.PlayerDamage)) >= i)
-        {
-            damageUpgrade ++;
-            p.PlayerDamage += damageUpgrade;
-        }
-    }
     e.EnemyHealth -= p.PlayerDamage;
 
     p.PlayerGold += 15;
@@ -129,15 +122,6 @@ static void PlayerWin(ref Player p, ref Enemy e)
 
 static void EnemyWin(ref Player p, ref Enemy e)
 {
-    int damageUpgrade = 0;
-    for (int i = 1; i <= 30; i++)
-    {
-        if ((e.EnemyGoldSpent / (40 * e.EnemyDamage)) >= i)
-        {
-            damageUpgrade ++;
-            e.EnemyDamage += damageUpgrade;
-        }
-    }
     p.PlayerHealth -= e.EnemyDamage;
 
     p.PlayerGold += 10;
@@ -151,7 +135,7 @@ static void Shop(ref Player p, ref PlayerCharacter pc, ref Enemy e)
     {
         while (chois != 5)
         {
-            Space();
+            Space(10);
             Console.WriteLine($"Ditt HP {p.PlayerHealth} och ATK {p.PlayerDamage}"); // skriv utt spelar health
             Console.WriteLine($"fiendens HP {e.EnemyHealth} och ATK {e.EnemyDamage}"); // skriv utt enemy health
             Console.WriteLine("");
@@ -183,11 +167,26 @@ static void Buy(ref Player p, ref PlayerCharacter pc, ref int chois)
         }
         p.PlayerGold -= 10;
         p.PlayerGoldSpent += 10;
+        PlayerDamageUppgrade(ref p);
     }
     else if (p.PlayerGold < 10 && chois != 5)
     {
         Console.WriteLine("du har inte råd");
         Console.ReadLine();
+    }
+}
+
+static void PlayerDamageUppgrade(ref Player p)
+{
+    int damageUpgrade = 0;
+
+    for (int i = 1; i <= 25; i++)
+    {
+        if ((p.PlayerGoldSpent / (5 * p.PlayerDamage)) >= i)
+        {
+            damageUpgrade++;
+            p.PlayerDamage += damageUpgrade;
+        }
     }
 }
 
@@ -204,8 +203,24 @@ static void EnemySpending(Player p, ref Enemy e, ref EnemyCharacter ec)
             case 3: ec.CharacterArmor += 5; break;
             case 4: ec.CharacterEvadeChance += 2; break;
         }
+
         e.EnemyGold -= 10;
         e.EnemyGoldSpent += 10;
+        EnemyDamageUppgrade(ref e);
+    }
+}
+
+static void EnemyDamageUppgrade(ref Enemy e)
+{
+    int damageUpgrade = 0;
+
+    for (int i = 1; i <= 30; i++)
+    {
+        if ((e.EnemyGoldSpent / (40 * e.EnemyDamage)) >= i)
+        {
+            damageUpgrade++;
+            e.EnemyDamage += damageUpgrade;
+        }
     }
 }
 
@@ -240,10 +255,10 @@ static int TryParseChois(int min, int max)
     return choisToNumber;
 }
 
-static void Space ()
+static void Space(int length)
 {
-    for (int i = 0; i < 5; i++)
+    for (int i = 0; i < length; i++)
     {
-        Console.WriteLine(""); 
+        Console.WriteLine("");
     }
 }
