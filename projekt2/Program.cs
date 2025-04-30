@@ -2,6 +2,7 @@
 using EnemyAndCharacter;
 
 int playAgain = 0;
+int gamesPlayed = 0;
 
 while (playAgain != 2)
 {
@@ -9,6 +10,8 @@ while (playAgain != 2)
     PlayerCharacter pc = new();
     Enemy e = new();
     EnemyCharacter ec = new();
+
+    p.hasSeenTutorial =+ gamesPlayed;
 
     Console.WriteLine("semi-auto battler");
     Console.WriteLine("");
@@ -19,10 +22,16 @@ while (playAgain != 2)
 
     if (playAgain == 1)
     {
+        Tutorial(0, ref p);
+        Tutorial(1, ref p);
         Game(p, pc, e, ec);
     }
 
-    Tutorial(4);
+    Tutorial(4, ref p);
+
+    gamesPlayed++;
+
+    Space(10);
 }
 
 static void Game(Player p, PlayerCharacter pc, Enemy e, EnemyCharacter ec)
@@ -32,6 +41,7 @@ static void Game(Player p, PlayerCharacter pc, Enemy e, EnemyCharacter ec)
         Space(5);
         Fighet(ref p, pc, ref e, ec);
         EnemySpending(p, ref e, ref ec);
+        Tutorial(2, ref p);
         Shop(ref p, ref pc, ref e);
         Interest(ref p, ref e);
     }
@@ -136,8 +146,8 @@ static void Shop(ref Player p, ref PlayerCharacter pc, ref Enemy e)
         while (chois != 5)
         {
             Space(10);
-            Console.WriteLine($"Ditt HP {p.PlayerHealth} och ATK {p.PlayerDamage}"); // skriv utt spelar health
-            Console.WriteLine($"fiendens HP {e.EnemyHealth} och ATK {e.EnemyDamage}"); // skriv utt enemy health
+            Console.WriteLine($"Ditt HP {p.PlayerHealth} och ATK {p.PlayerDamage}"); // skriv utt spelar health och ATK
+            Console.WriteLine($"fiendens HP {e.EnemyHealth} och ATK {e.EnemyDamage}"); // skriv utt enemy -||-
             Console.WriteLine("");
             Console.WriteLine("kostnad på allt är 10 guld");
             Console.WriteLine($"du har {p.PlayerGold} guld");
@@ -174,6 +184,7 @@ static void Buy(ref Player p, ref PlayerCharacter pc, ref int chois)
         Console.WriteLine("du har inte råd");
         Console.ReadLine();
     }
+    Tutorial(3, ref p);
 }
 
 static void PlayerDamageUppgrade(ref Player p)
@@ -182,7 +193,7 @@ static void PlayerDamageUppgrade(ref Player p)
 
     for (int i = 1; i <= 25; i++)
     {
-        if ((p.PlayerGoldSpent / (40 * p.PlayerDamage)) >= i)
+        if ((p.PlayerGoldSpent / (5 * p.PlayerDamage)) >= i)
         {
             damageUpgrade++;
             p.PlayerDamage += damageUpgrade;
@@ -263,7 +274,7 @@ static void Space(int length)
     }
 }
 
-static void Tutorial(int tutorialSteps) // den här metoden är för att ge spelaren förståelse för hur spelet funkar
+static void Tutorial(int tutorialSteps, ref Player p) // den här metoden är för att ge spelaren förståelse för hur spelet funkar
 {
     // jag valde en array för att jag vet att jag inte kommer behöva mera text än det här. 
     string[] tutorial = [
@@ -274,13 +285,16 @@ static void Tutorial(int tutorialSteps) // den här metoden är för att ge spel
         "Nu så har du klarat din första match och jag har lärt dig allt jag kan. Nu är det upp till dig att hitta på olicka sätt att vinna över fienden hur du än vill. Lycka till"
     ];
 
-    for (int i = 0; i < 5; i++)
+    if (p.hasSeenTutorial < tutorialSteps)
     {
-        if (tutorialSteps == i)
+        for (int i = 0; i < 5; i++)
         {
-            Console.WriteLine(tutorial[tutorialSteps]);
+            if (tutorialSteps == i)
+            {
+                Console.WriteLine(tutorial[tutorialSteps]);
+            }
         }
+        Console.ReadLine();
+        p.hasSeenTutorial++;
     }
-    Console.ReadLine();
-
 }

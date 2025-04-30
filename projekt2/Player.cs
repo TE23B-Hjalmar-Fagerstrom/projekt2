@@ -6,6 +6,7 @@ namespace PlayerAndCharacter
         public int PlayerDamage = 1;
         public int PlayerGold = 15;
         public int PlayerGoldSpent = 0;
+        public int hasSeenTutorial = -1;
     }
     public class PlayerCharacter
     {
