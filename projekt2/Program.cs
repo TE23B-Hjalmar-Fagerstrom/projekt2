@@ -4,40 +4,42 @@ using EnemyAndCharacter;
 int playAgain = 0;
 int gamesPlayed = 0;
 
-while (playAgain != 2)
+while (playAgain != 2) //
 {
+    //
     Player p = new();
     PlayerCharacter pc = new();
     Enemy e = new();
     EnemyCharacter ec = new();
 
-    p.hasSeenTutorial =+ gamesPlayed;
+    p.hasSeenTutorial =+ gamesPlayed; //
 
     Console.WriteLine("semi-auto battler");
     Console.WriteLine("");
     Console.WriteLine("");
     Console.WriteLine("1.new game   2.Quit");
 
-    playAgain = TryParseChois(1, 2);
+    playAgain = TryParseChois(1, 2); //
 
-    if (playAgain == 1)
+    if (playAgain == 1) //
     {
         Tutorial(0, ref p);
         Tutorial(1, ref p);
         Game(p, pc, e, ec);
     }
 
-    Tutorial(4, ref p);
+    Tutorial(4, ref p); //
 
-    gamesPlayed++;
+    gamesPlayed++; //
 
     Space(10);
 }
 
-static void Game(Player p, PlayerCharacter pc, Enemy e, EnemyCharacter ec)
+static void Game(Player p, PlayerCharacter pc, Enemy e, EnemyCharacter ec) //
 {
-    while (p.PlayerHealth > 0 && e.EnemyHealth > 0)
+    while (p.PlayerHealth > 0 && e.EnemyHealth > 0) //
     {
+        //
         Space(5);
         Fighet(ref p, pc, ref e, ec);
         EnemySpending(p, ref e, ref ec);
@@ -47,11 +49,12 @@ static void Game(Player p, PlayerCharacter pc, Enemy e, EnemyCharacter ec)
     }
 }
 
-static void Fighet(ref Player p, PlayerCharacter pc, ref Enemy e, EnemyCharacter ec)
+static void Fighet(ref Player p, PlayerCharacter pc, ref Enemy e, EnemyCharacter ec) //
 {
     pc.CharacterHealth = pc.CharacterMaxHealth;
     ec.CharacterHealth = ec.CharacterMaxHealth;
-    while (pc.CharacterHealth > 0 && ec.CharacterHealth > 0)
+
+    while (pc.CharacterHealth > 0 && ec.CharacterHealth > 0) //
     {
         Space(10);
         pc.CharacterHealth = EnemyTurn(pc, ec);
@@ -59,91 +62,95 @@ static void Fighet(ref Player p, PlayerCharacter pc, ref Enemy e, EnemyCharacter
         ec.CharacterHealth = PlayerTurn(pc, ec);
         Console.ReadLine();
 
-        if (pc.CharacterHealth > 0 && ec.CharacterHealth <= 0)
+        if (pc.CharacterHealth > 0 && ec.CharacterHealth <= 0) //
         {
             PlayerWin(ref p, ref e);
         }
-        else if (pc.CharacterHealth <= 0 && ec.CharacterHealth > 0)
+        else if (pc.CharacterHealth <= 0 && ec.CharacterHealth > 0) //
         {
             EnemyWin(ref p, ref e);
         }
     }
 }
 
-static int PlayerTurn(PlayerCharacter pc, EnemyCharacter ec)
+static int PlayerTurn(PlayerCharacter pc, EnemyCharacter ec) //
 {
-    if (pc.CharacterHealth > 0 && ec.CharacterHealth > 0)
+    if (pc.CharacterHealth > 0 && ec.CharacterHealth > 0) //
     {
         ec.CharacterHealth -= pc.CharacterDamage - ec.CharacterArmor;
         ec.CharacterHealth = ECharacterEvade(pc, ec, out int evade);
-        if (evade == 0)
+        if (evade == 0) //
         {
             Console.WriteLine($"Du träfade fiendens gube och den har {ec.CharacterHealth} HP kvar");
         }
     }
-    return ec.CharacterHealth;
+
+    return ec.CharacterHealth; //
 }
 
-static int EnemyTurn(PlayerCharacter pc, EnemyCharacter ec)
+static int EnemyTurn(PlayerCharacter pc, EnemyCharacter ec) //
 {
-    if (pc.CharacterHealth > 0 && ec.CharacterHealth > 0)
+    if (pc.CharacterHealth > 0 && ec.CharacterHealth > 0) //
     {
         pc.CharacterHealth -= ec.CharacterDamage - pc.CharacterArmor;
         pc.CharacterHealth = PCharacterEvade(pc, ec, out int evade);
-        if (evade == 0)
+        if (evade == 0) //
         {
             Console.WriteLine($"Fienden träfade din gube och den har {pc.CharacterHealth} HP kvar");
         }
     }
-    return pc.CharacterHealth;
+
+    return pc.CharacterHealth; //
 }
 
 static int PCharacterEvade(PlayerCharacter pc, EnemyCharacter ec, out int evade) // kollar om spelaren undvek
 {
     evade = 0;
-    if (pc.CharacterEvadeProbability < pc.CharacterEvadeChance)
+    if (pc.CharacterEvadeProbability < pc.CharacterEvadeChance) //
     {
         Console.WriteLine("Du undvek fiendens attack");
         pc.CharacterHealth += ec.CharacterDamage - pc.CharacterArmor;
         evade = 1;
     }
-    return pc.CharacterHealth;
+    return pc.CharacterHealth; //
 }
 
 static int ECharacterEvade(PlayerCharacter pc, EnemyCharacter ec, out int evade) // kollar om fienden undvek
 {
     evade = 0;
-    if (ec.CharacterEvadeProbability < ec.CharacterEvadeChance)
+    if (ec.CharacterEvadeProbability < ec.CharacterEvadeChance) //
     {
         Console.WriteLine("Fienden undvek din attack");
         ec.CharacterHealth += pc.CharacterDamage - ec.CharacterArmor;
         evade = 1;
     }
-    return ec.CharacterHealth;
+    return ec.CharacterHealth; //
 }
 
-static void PlayerWin(ref Player p, ref Enemy e)
+static void PlayerWin(ref Player p, ref Enemy e) //
 {
-    e.EnemyHealth -= p.PlayerDamage;
+    e.EnemyHealth -= p.PlayerDamage; //
 
+    //
     p.PlayerGold += 15;
     e.EnemyGold += 10;
 }
 
-static void EnemyWin(ref Player p, ref Enemy e)
+static void EnemyWin(ref Player p, ref Enemy e) //
 {
-    p.PlayerHealth -= e.EnemyDamage;
+    p.PlayerHealth -= e.EnemyDamage; //
 
+    //
     p.PlayerGold += 10;
     e.EnemyGold += 15;
 }
 
-static void Shop(ref Player p, ref PlayerCharacter pc, ref Enemy e)
+static void Shop(ref Player p, ref PlayerCharacter pc, ref Enemy e) //
 {
     int chois = 0;
-    if (p.PlayerHealth > 0 && e.EnemyHealth > 0)
+    if (p.PlayerHealth > 0 && e.EnemyHealth > 0) //
     {
-        while (chois != 5)
+        while (chois != 5) //
         {
             Space(10);
             Console.WriteLine($"Ditt HP {p.PlayerHealth} och ATK {p.PlayerDamage}"); // skriv utt spelar health och ATK
@@ -158,15 +165,15 @@ static void Shop(ref Player p, ref PlayerCharacter pc, ref Enemy e)
             Console.WriteLine($"4. uppgradera EVADE (+2%) aktuell EVADE ({pc.CharacterEvadeChance}%)");
             Console.WriteLine($"5. quit shop");
 
-            chois = TryParseChois(1, 5);
-            Buy(ref p, ref pc, ref chois);
+            chois = TryParseChois(1, 5); //
+            Buy(ref p, ref pc, ref chois); //
         }
     }
 }
 
-static void Buy(ref Player p, ref PlayerCharacter pc, ref int chois)
+static void Buy(ref Player p, ref PlayerCharacter pc, ref int chois) //
 {
-    if (chois != 5 && p.PlayerGold >= 10)
+    if (chois != 5 && p.PlayerGold >= 10) //
     {
         switch (chois) // ChatGPT: jag frågade om den kunde göra en mindre if-sats fyld lösning 
         {
@@ -179,21 +186,22 @@ static void Buy(ref Player p, ref PlayerCharacter pc, ref int chois)
         p.PlayerGoldSpent += 10;
         PlayerDamageUppgrade(ref p);
     }
-    else if (p.PlayerGold < 10 && chois != 5)
+    else if (p.PlayerGold < 10 && chois != 5) // 
     {
         Console.WriteLine("du har inte råd");
         Console.ReadLine();
     }
-    Tutorial(3, ref p);
+
+    Tutorial(3, ref p); //
 }
 
-static void PlayerDamageUppgrade(ref Player p)
+static void PlayerDamageUppgrade(ref Player p) //
 {
     int damageUpgrade = 0;
 
-    for (int i = 1; i <= 25; i++)
+    for (int i = 1; i <= 25; i++) //
     {
-        if ((p.PlayerGoldSpent / (5 * p.PlayerDamage)) >= i)
+        if ((p.PlayerGoldSpent / (40 * p.PlayerDamage)) >= i) //
         {
             damageUpgrade++;
             p.PlayerDamage += damageUpgrade;
@@ -201,33 +209,34 @@ static void PlayerDamageUppgrade(ref Player p)
     }
 }
 
-static void EnemySpending(Player p, ref Enemy e, ref EnemyCharacter ec)
+static void EnemySpending(Player p, ref Enemy e, ref EnemyCharacter ec) // 
 {
+    //
     while (e.EnemyGold >= 110 && (e.EnemyHealth - p.PlayerDamage) > 0 || e.EnemyGold >= 10 && (e.EnemyHealth - p.PlayerDamage) <= 0)
     {
         int random = Random.Shared.Next(1, 5);
 
-        switch (random)
+        switch (random) // åter använde GPT lösningen då jag tyckte om den
         {
             case 1: ec.CharacterMaxHealth += 10; break;
             case 2: ec.CharacterDamage += 5; break;
-            case 3: ec.CharacterArmor += 5; break;
+            case 3: ec.CharacterArmor += 10; break;
             case 4: ec.CharacterEvadeChance += 2; break;
         }
 
         e.EnemyGold -= 10;
         e.EnemyGoldSpent += 10;
-        EnemyDamageUppgrade(ref e);
+        EnemyDamageUppgrade(ref e); //
     }
 }
 
-static void EnemyDamageUppgrade(ref Enemy e)
+static void EnemyDamageUppgrade(ref Enemy e) // gör så att fienden gör mer DMG efter en vis mängd guld spenderad
 {
     int damageUpgrade = 0;
 
-    for (int i = 1; i <= 30; i++)
+    for (int i = 1; i <= 30; i++) // 
     {
-        if ((e.EnemyGoldSpent / (40 * e.EnemyDamage)) >= i)
+        if ((e.EnemyGoldSpent / (40 * e.EnemyDamage)) >= i) // 
         {
             damageUpgrade++;
             e.EnemyDamage += damageUpgrade;
@@ -235,40 +244,41 @@ static void EnemyDamageUppgrade(ref Enemy e)
     }
 }
 
-static void Interest(ref Player p, ref Enemy e)
+static void Interest(ref Player p, ref Enemy e) // kollar om båda ska få ränta för pengarna de fåller
 {
-    for (int i = 1; i <= 10; i++)
+    for (int i = 1; i <= 10; i++) // upprepas tills man har fåt 10 guld eller 
     {
-        if (p.PlayerGold / 10 >= i)
+        if (p.PlayerGold / 10 >= i) // kollar att spelaren förtjänar ränta
         {
             p.PlayerGold += 1;
         }
 
-        if (e.EnemyGold / 10 >= i)
+        if (e.EnemyGold / 10 >= i) // kollar att fienden förtjänar ränta
         {
             e.EnemyGold += 1;
         }
     }
 }
 
-static int TryParseChois(int min, int max)
+static int TryParseChois(int min, int max) // används för att ta input från spelaren
 {
     int choisToNumber = 0;
-    while (choisToNumber < min || choisToNumber > max)
+    while (choisToNumber < min || choisToNumber > max) // så lännge spelaren inte skriver ett giltigt nummer 
     {
         string chois = Console.ReadLine();
         int.TryParse(chois, out choisToNumber);
-        if (choisToNumber < min || choisToNumber > max)
+        if (choisToNumber < min || choisToNumber > max) // om spelaren kav ett ogiltigt nummer 
         {
-            Console.WriteLine($"skriv ett tal mellan {min} och {max}");
+            Console.WriteLine($"skriv ett tal från {min} till {max}"); // skriver ut vilka nummer man kan skriva 
         }
     }
-    return choisToNumber;
+
+    return choisToNumber; // ger tillbaka vad spelaren valde 
 }
 
-static void Space(int length)
+static void Space(int length) // används för att göra mellanrum till annan text 
 {
-    for (int i = 0; i < length; i++)
+    for (int i = 0; i < length; i++) // görs så länge jag satte det till
     {
         Console.WriteLine("");
     }
@@ -285,16 +295,16 @@ static void Tutorial(int tutorialSteps, ref Player p) // den här metoden är f�
         "Nu så har du klarat din första match och jag har lärt dig allt jag kan. Nu är det upp till dig att hitta på olicka sätt att vinna över fienden hur du än vill. Lycka till"
     ];
 
-    if (p.hasSeenTutorial < tutorialSteps)
+    if (p.hasSeenTutorial < tutorialSteps) // om spelaren har set en torial så kommer den inte vissas igen
     {
-        for (int i = 0; i < 5; i++)
+        for (int i = 0; i < 5; i++) // kollar vilken tutorial som ska skrivas
         {
             if (tutorialSteps == i)
             {
                 Console.WriteLine(tutorial[tutorialSteps]);
             }
         }
-        Console.ReadLine();
-        p.hasSeenTutorial++;
+        Console.ReadLine(); // gör så att spelaren bestämmer när de ska gå vidare 
+        p.hasSeenTutorial++; 
     }
 }
