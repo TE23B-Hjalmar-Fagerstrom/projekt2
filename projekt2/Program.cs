@@ -2,9 +2,9 @@
 using EnemyAndCharacter;
 
 int playAgain = 0;
-int gamesPlayed = 0;
+int gamesPlayed = -1;
 
-while (playAgain != 2) //
+while (playAgain != 2) // så länge spelaren inte väljer quit så fortsätter spelet
 {
     //
     Player p = new();
@@ -30,7 +30,7 @@ while (playAgain != 2) //
 
     Tutorial(4, ref p); //
 
-    gamesPlayed++; //
+    gamesPlayed += 5; //
 
     Space(10);
 }
@@ -77,6 +77,11 @@ static int PlayerTurn(PlayerCharacter pc, EnemyCharacter ec) //
 {
     if (pc.CharacterHealth > 0 && ec.CharacterHealth > 0) //
     {
+        if (ec.CharacterArmor > pc.CharacterDamage)
+        {
+            ec.CharacterArmor = pc.CharacterDamage;
+        }
+
         ec.CharacterHealth -= pc.CharacterDamage - ec.CharacterArmor;
         ec.CharacterHealth = ECharacterEvade(pc, ec, out int evade);
         if (evade == 0) //
@@ -92,9 +97,14 @@ static int EnemyTurn(PlayerCharacter pc, EnemyCharacter ec) //
 {
     if (pc.CharacterHealth > 0 && ec.CharacterHealth > 0) //
     {
+        if (pc.CharacterArmor > ec.CharacterDamage)
+        {
+            pc.CharacterArmor = ec.CharacterDamage;
+        }
+
         pc.CharacterHealth -= ec.CharacterDamage - pc.CharacterArmor;
         pc.CharacterHealth = PCharacterEvade(pc, ec, out int evade);
-        if (evade == 0) //
+        if (evade == 0) // 
         {
             Console.WriteLine($"Fienden träfade din gube och den har {pc.CharacterHealth} HP kvar");
         }
@@ -112,6 +122,7 @@ static int PCharacterEvade(PlayerCharacter pc, EnemyCharacter ec, out int evade)
         pc.CharacterHealth += ec.CharacterDamage - pc.CharacterArmor;
         evade = 1;
     }
+
     return pc.CharacterHealth; //
 }
 
@@ -197,14 +208,11 @@ static void Buy(ref Player p, ref PlayerCharacter pc, ref int chois) //
 
 static void PlayerDamageUppgrade(ref Player p) //
 {
-    int damageUpgrade = 0;
-
     for (int i = 1; i <= 25; i++) //
     {
         if ((p.PlayerGoldSpent / (40 * p.PlayerDamage)) >= i) //
         {
-            damageUpgrade++;
-            p.PlayerDamage += damageUpgrade;
+            p.PlayerDamage ++;
         }
     }
 }
@@ -226,20 +234,17 @@ static void EnemySpending(Player p, ref Enemy e, ref EnemyCharacter ec) //
 
         e.EnemyGold -= 10;
         e.EnemyGoldSpent += 10;
-        EnemyDamageUppgrade(ref e); //
+        EnemyDamageUppgrade(ref e); // 
     }
 }
 
-static void EnemyDamageUppgrade(ref Enemy e) // gör så att fienden gör mer DMG efter en vis mängd guld spenderad
+static void EnemyDamageUppgrade(ref Enemy e) // gör så att fienden gör mer DMG efter en vis mängd guld spenderas
 {
-    int damageUpgrade = 0;
-
     for (int i = 1; i <= 30; i++) // 
     {
-        if ((e.EnemyGoldSpent / (40 * e.EnemyDamage)) >= i) // 
+        if ((e.EnemyGoldSpent / (40 * e.EnemyDamage)) >= i) // för varge 40 guld man spenderar så får man ATK++ 
         {
-            damageUpgrade++;
-            e.EnemyDamage += damageUpgrade;
+            e.EnemyDamage ++;
         }
     }
 }
@@ -288,7 +293,7 @@ static void Tutorial(int tutorialSteps, ref Player p) // den här metoden är f�
 {
     // jag valde en array för att jag vet att jag inte kommer behöva mera text än det här. 
     string[] tutorial = [
-        "hej, jag är här för att lära dig hur spelet fungerar. Tillat börja med så kommer du att behöva trycka [ENTER] för att komma ur den här konversationen.",
+        "hej, jag är här för att lära dig hur spelet fungerar. Tillat börja med så kommer du att behöva trycka [ENTER] för att   komma ur den här konversationen.",
         "Bra, under stridens gång kommer du att behöva trycka [ENTER] en massa gånger för att fortsätta den. Efter du är klar med striden kommer jag och förklarar vad som kommer efter den.",
         "Nu när striden är slut så har du en möjlighet att uppgradera din gubbe. Eller så kan du spara dina pengar för att få mer pengar. För varje 10 guld du håller får du 1 extra, du kan som max få 10 guld (eller i andra ord om du håller 100 guld)",
         "Nu när du har spenderat ditt första guld kan jag förklara för dig att för varje 40 guld du spenderar kommer du att göra mer skada på din fiende om du vinner striden. Detsamma gäller för din fiende, så håll ett öga på deras attack så att du inte sparar pengar som kan ha rädda dig.",
