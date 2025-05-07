@@ -8,6 +8,7 @@ namespace PlayerAndCharacter
         public int PlayerGoldSpent = 0;
         public int hasSeenTutorial = -1;
     }
+    
     public class PlayerCharacter
     {
         public int CharacterHealth = 0;

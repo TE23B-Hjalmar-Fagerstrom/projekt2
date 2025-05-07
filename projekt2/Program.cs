@@ -75,36 +75,36 @@ static void Fighet(ref Player p, PlayerCharacter pc, ref Enemy e, EnemyCharacter
 
 static int PlayerTurn(PlayerCharacter pc, EnemyCharacter ec) //
 {
-    if (pc.CharacterHealth > 0 && ec.CharacterHealth > 0) //
+    if (pc.CharacterHealth > 0 && ec.CharacterHealth > 0) // om båda karaktärna är levande så händer nedanstående 
     {
-        if (ec.CharacterArmor > pc.CharacterDamage)
+        if (ec.CharacterArmor > pc.CharacterDamage) // gör så fiendens karaktär inte får HP om den har mer armor än spelarens karaktärs ATK
         {
             ec.CharacterArmor = pc.CharacterDamage;
         }
 
         ec.CharacterHealth -= pc.CharacterDamage - ec.CharacterArmor;
         ec.CharacterHealth = ECharacterEvade(pc, ec, out int evade);
-        if (evade == 0) //
+        if (evade == 0) // om fienden inte undvek
         {
             Console.WriteLine($"Du träfade fiendens gube och den har {ec.CharacterHealth} HP kvar");
         }
     }
 
-    return ec.CharacterHealth; //
+    return ec.CharacterHealth; // ger tillbaka fiende karaktärs HP
 }
 
 static int EnemyTurn(PlayerCharacter pc, EnemyCharacter ec) //
 {
-    if (pc.CharacterHealth > 0 && ec.CharacterHealth > 0) //
+    if (pc.CharacterHealth > 0 && ec.CharacterHealth > 0) // om båda karaktärna är levande så händer nedanstående
     {
-        if (pc.CharacterArmor > ec.CharacterDamage)
+        if (pc.CharacterArmor > ec.CharacterDamage) // gör så spelarens karaktär inte får HP om den har mer armor än fiendens karaktärs ATK
         {
             pc.CharacterArmor = ec.CharacterDamage;
         }
 
         pc.CharacterHealth -= ec.CharacterDamage - pc.CharacterArmor;
         pc.CharacterHealth = PCharacterEvade(pc, ec, out int evade);
-        if (evade == 0) // 
+        if (evade == 0) // om spelaren inte undvek 
         {
             Console.WriteLine($"Fienden träfade din gube och den har {pc.CharacterHealth} HP kvar");
         }
@@ -147,28 +147,29 @@ static void PlayerWin(ref Player p, ref Enemy e) //
     e.EnemyGold += 10;
 }
 
-static void EnemyWin(ref Player p, ref Enemy e) //
+static void EnemyWin(ref Player p, ref Enemy e) // om fienden vinner 
 {
-    p.PlayerHealth -= e.EnemyDamage; //
+    p.PlayerHealth -= e.EnemyDamage; // spelaren tar skada från fienden
 
-    //
+    // vinst / förlust intäkt
     p.PlayerGold += 10;
     e.EnemyGold += 15;
 }
 
-static void Shop(ref Player p, ref PlayerCharacter pc, ref Enemy e) //
+// i affären ser du vad du kan köpa, hur mycket HP och DMG du och fienden gör och hur mycket guld du har
+static void Shop(ref Player p, ref PlayerCharacter pc, ref Enemy e) 
 {
     int chois = 0;
-    if (p.PlayerHealth > 0 && e.EnemyHealth > 0) //
+    if (p.PlayerHealth > 0 && e.EnemyHealth > 0) // om båda är vid liv
     {
-        while (chois != 5) //
+        while (chois != 5) // sålänge spelaren inte lämnar affären 
         {
             Space(10);
-            Console.WriteLine($"Ditt HP {p.PlayerHealth} och ATK {p.PlayerDamage}"); // skriv utt spelar health och ATK
+            Console.WriteLine($"Ditt HP {p.PlayerHealth} och ATK {p.PlayerDamage}"); // skriv utt spelar HP och ATK
             Console.WriteLine($"fiendens HP {e.EnemyHealth} och ATK {e.EnemyDamage}"); // skriv utt enemy -||-
             Console.WriteLine("");
             Console.WriteLine("kostnad på allt är 10 guld");
-            Console.WriteLine($"du har {p.PlayerGold} guld");
+            Console.WriteLine($"du har {p.PlayerGold} guld"); // skriver utt hur mycket guld du har
             Console.WriteLine("");
             Console.WriteLine($"1. uppgradera HP (+10) aktuell HP ({pc.CharacterMaxHealth})");
             Console.WriteLine($"2. uppgradera ATK (+5) aktuell ATK ({pc.CharacterDamage})");
@@ -176,15 +177,16 @@ static void Shop(ref Player p, ref PlayerCharacter pc, ref Enemy e) //
             Console.WriteLine($"4. uppgradera EVADE (+2%) aktuell EVADE ({pc.CharacterEvadeChance}%)");
             Console.WriteLine($"5. quit shop");
 
-            chois = TryParseChois(1, 5); //
-            Buy(ref p, ref pc, ref chois); //
+            chois = TryParseChois(1, 5); // spelaren bestämmer för att köpa något eller att lämna affären
+            Buy(ref p, ref pc, ref chois); // är där transaktionen av värden händer 
         }
     }
 }
 
-static void Buy(ref Player p, ref PlayerCharacter pc, ref int chois) //
+// om spelaren bestämde sig för att köpa något från affären så görs transaktion av värden här
+static void Buy(ref Player p, ref PlayerCharacter pc, ref int chois) 
 {
-    if (chois != 5 && p.PlayerGold >= 10) //
+    if (chois != 5 && p.PlayerGold >= 10) // om spelaren har råd och inte lämna affären
     {
         switch (chois) // ChatGPT: jag frågade om den kunde göra en mindre if-sats fyld lösning 
         {
@@ -195,36 +197,36 @@ static void Buy(ref Player p, ref PlayerCharacter pc, ref int chois) //
         }
         p.PlayerGold -= 10;
         p.PlayerGoldSpent += 10;
-        PlayerDamageUppgrade(ref p);
+        PlayerDamageUppgrade(ref p); // uppgraderar spelarens DMG beroende på om alla krav uppfylls
     }
-    else if (p.PlayerGold < 10 && chois != 5) // 
+    else if (p.PlayerGold < 10 && chois != 5) // om spelaren inte har råd och inte lämna affären
     {
         Console.WriteLine("du har inte råd");
         Console.ReadLine();
     }
 
-    Tutorial(3, ref p); //
+    Tutorial(3, ref p); // ger tips till spelaren efter ha gjort sitt första köp 
 }
 
-static void PlayerDamageUppgrade(ref Player p) //
+static void PlayerDamageUppgrade(ref Player p) // gör så att spelaren gör mer DMG efter en vis mängd guld spenderas
 {
-    for (int i = 1; i <= 25; i++) //
+    for (int i = 1; i <= 25; i++) // upprepas 25 gånger så spelaren kan ha en max DMG på 25 
     {
-        if ((p.PlayerGoldSpent / (40 * p.PlayerDamage)) >= i) //
+        if ((p.PlayerGoldSpent / (40 * p.PlayerDamage)) >= i) // för varje 40 guld man spenderar så får man DMG++ 
         {
             p.PlayerDamage ++;
         }
     }
 }
 
-static void EnemySpending(Player p, ref Enemy e, ref EnemyCharacter ec) // 
+static void EnemySpending(Player p, ref Enemy e, ref EnemyCharacter ec) // När och hur fienden uppgraderar sin karaktär 
 {
-    //
+    // logiken för när fienden ska köpa eller inte 
     while (e.EnemyGold >= 110 && (e.EnemyHealth - p.PlayerDamage) > 0 || e.EnemyGold >= 10 && (e.EnemyHealth - p.PlayerDamage) <= 0)
     {
         int random = Random.Shared.Next(1, 5);
 
-        switch (random) // åter använde GPT lösningen då jag tyckte om den
+        switch (random) // slumpar vad fienden uppgraderar (åter använde GPT lösningen då jag tyckte om den)
         {
             case 1: ec.CharacterMaxHealth += 10; break;
             case 2: ec.CharacterDamage += 5; break;
@@ -234,15 +236,15 @@ static void EnemySpending(Player p, ref Enemy e, ref EnemyCharacter ec) //
 
         e.EnemyGold -= 10;
         e.EnemyGoldSpent += 10;
-        EnemyDamageUppgrade(ref e); // 
+        EnemyDamageUppgrade(ref e); // uppgraderar fiendens DMG beroende på om alla krav uppfylls
     }
 }
 
 static void EnemyDamageUppgrade(ref Enemy e) // gör så att fienden gör mer DMG efter en vis mängd guld spenderas
 {
-    for (int i = 1; i <= 30; i++) // 
+    for (int i = 1; i <= 30; i++) // upprepas 30 gånger så fienden kan ha en max DMG på 30  
     {
-        if ((e.EnemyGoldSpent / (40 * e.EnemyDamage)) >= i) // för varge 40 guld man spenderar så får man ATK++ 
+        if ((e.EnemyGoldSpent / (40 * e.EnemyDamage)) >= i) // för varje 40 guld fienden spenderar så får man DMG++ 
         {
             e.EnemyDamage ++;
         }
@@ -253,12 +255,12 @@ static void Interest(ref Player p, ref Enemy e) // kollar om båda ska få ränt
 {
     for (int i = 1; i <= 10; i++) // upprepas tills man har fåt 10 guld eller 
     {
-        if (p.PlayerGold / 10 >= i) // kollar att spelaren förtjänar ränta
+        if (p.PlayerGold / 10 >= i) // kollar om spelaren förtjänar ränta
         {
             p.PlayerGold += 1;
         }
 
-        if (e.EnemyGold / 10 >= i) // kollar att fienden förtjänar ränta
+        if (e.EnemyGold / 10 >= i) // kollar om fienden förtjänar ränta
         {
             e.EnemyGold += 1;
         }
