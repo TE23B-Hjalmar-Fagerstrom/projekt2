@@ -1,45 +1,46 @@
-﻿using PlayerAndCharacter;
-using EnemyAndCharacter;
+﻿using PlayerAndCharacter; // alla spelarens och karaktärens variabler 
+using EnemyAndCharacter; // alla fiendens och karaktärens variabler 
 
 int playAgain = 0;
-int gamesPlayed = -1;
+int gamesPlayed = -1; // gör så att alla tutoriellerna är synliga första gången man spelar 
 
 while (playAgain != 2) // så länge spelaren inte väljer quit så fortsätter spelet
 {
-    //
+    // säter allas värden till start värdena 
     Player p = new();
     PlayerCharacter pc = new();
     Enemy e = new();
     EnemyCharacter ec = new();
 
-    p.hasSeenTutorial =+ gamesPlayed; //
+    p.hasSeenTutorial =+ gamesPlayed; // gör så att tutoriellerna inte dyckerup om man spelar spelet igen
 
     Console.WriteLine("semi-auto battler");
     Console.WriteLine("");
     Console.WriteLine("");
-    Console.WriteLine("1.new game   2.Quit");
+    Console.WriteLine("1.New Game   2.Quit");
 
-    playAgain = TryParseChois(1, 2); //
+    playAgain = TryParseChois(1, 2); // spelaren väljer antingen "new game" eller "quit"
 
-    if (playAgain == 1) //
+    if (playAgain == 1) // om spelaren valde "new game" 
     {
         Tutorial(0, ref p);
         Tutorial(1, ref p);
         Game(p, pc, e, ec);
     }
 
-    Tutorial(4, ref p); //
+    Tutorial(4, ref p); // en uppmaning att pröva olika strategier
 
-    gamesPlayed += 5; //
+    gamesPlayed += 5; // gör så att tutoriellerna inte dyckerup om man spelar spelet igen
 
     Space(10);
 }
 
-static void Game(Player p, PlayerCharacter pc, Enemy e, EnemyCharacter ec) //
+// deta är hela spelet 
+static void Game(Player p, PlayerCharacter pc, Enemy e, EnemyCharacter ec) 
 {
-    while (p.PlayerHealth > 0 && e.EnemyHealth > 0) //
+    while (p.PlayerHealth > 0 && e.EnemyHealth > 0) // sålänge båda lever 
     {
-        //
+        // alla spelets delar
         Space(5);
         Fighet(ref p, pc, ref e, ec);
         EnemySpending(p, ref e, ref ec);
@@ -49,12 +50,13 @@ static void Game(Player p, PlayerCharacter pc, Enemy e, EnemyCharacter ec) //
     }
 }
 
-static void Fighet(ref Player p, PlayerCharacter pc, ref Enemy e, EnemyCharacter ec) //
+// hela striden och vad man får efter striden 
+static void Fighet(ref Player p, PlayerCharacter pc, ref Enemy e, EnemyCharacter ec) 
 {
     pc.CharacterHealth = pc.CharacterMaxHealth;
     ec.CharacterHealth = ec.CharacterMaxHealth;
 
-    while (pc.CharacterHealth > 0 && ec.CharacterHealth > 0) //
+    while (pc.CharacterHealth > 0 && ec.CharacterHealth > 0) // så länge båda karaktärerna lever 
     {
         Space(10);
         pc.CharacterHealth = EnemyTurn(pc, ec);
@@ -62,18 +64,18 @@ static void Fighet(ref Player p, PlayerCharacter pc, ref Enemy e, EnemyCharacter
         ec.CharacterHealth = PlayerTurn(pc, ec);
         Console.ReadLine();
 
-        if (pc.CharacterHealth > 0 && ec.CharacterHealth <= 0) //
+        if (pc.CharacterHealth > 0 && ec.CharacterHealth <= 0) // om fienden har 0 HP eller mindre vinner spelaren
         {
             PlayerWin(ref p, ref e);
         }
-        else if (pc.CharacterHealth <= 0 && ec.CharacterHealth > 0) //
+        else if (pc.CharacterHealth <= 0 && ec.CharacterHealth > 0) // om spelaren har 0 HP eller minder vinner fienden
         {
             EnemyWin(ref p, ref e);
         }
     }
 }
 
-static int PlayerTurn(PlayerCharacter pc, EnemyCharacter ec) //
+static int PlayerTurn(PlayerCharacter pc, EnemyCharacter ec) // när det är spelarens tur att anfalla
 {
     if (pc.CharacterHealth > 0 && ec.CharacterHealth > 0) // om båda karaktärna är levande så händer nedanstående 
     {
@@ -93,56 +95,62 @@ static int PlayerTurn(PlayerCharacter pc, EnemyCharacter ec) //
     return ec.CharacterHealth; // ger tillbaka fiende karaktärs HP
 }
 
-static int EnemyTurn(PlayerCharacter pc, EnemyCharacter ec) //
+static int EnemyTurn(PlayerCharacter pc, EnemyCharacter ec) // när det är fiendens tur att anfalla
 {
     if (pc.CharacterHealth > 0 && ec.CharacterHealth > 0) // om båda karaktärna är levande så händer nedanstående
     {
-        if (pc.CharacterArmor > ec.CharacterDamage) // gör så spelarens karaktär inte får HP om den har mer armor än fiendens karaktärs ATK
+        if (pc.CharacterArmor > ec.CharacterDamage) // gör så spelarens karaktär inte får HP om den har mer armor än fiende karaktärens ATK
         {
             pc.CharacterArmor = ec.CharacterDamage;
         }
 
         pc.CharacterHealth -= ec.CharacterDamage - pc.CharacterArmor;
         pc.CharacterHealth = PCharacterEvade(pc, ec, out int evade);
+
         if (evade == 0) // om spelaren inte undvek 
         {
             Console.WriteLine($"Fienden träfade din gube och den har {pc.CharacterHealth} HP kvar");
         }
     }
 
-    return pc.CharacterHealth; //
+    return pc.CharacterHealth; // ger tillbaka spelar karaktärens HP
 }
 
 static int PCharacterEvade(PlayerCharacter pc, EnemyCharacter ec, out int evade) // kollar om spelaren undvek
 {
     evade = 0;
-    if (pc.CharacterEvadeProbability < pc.CharacterEvadeChance) //
+
+    // prob kommer slumpa ett tal mellan 1 och 100 och om det är under eller lika med Chance så undviker karaktären
+    if (pc.CharacterEvadeProbability <= pc.CharacterEvadeChance) 
     {
         Console.WriteLine("Du undvek fiendens attack");
         pc.CharacterHealth += ec.CharacterDamage - pc.CharacterArmor;
         evade = 1;
     }
 
-    return pc.CharacterHealth; //
+    return pc.CharacterHealth; // ger tillbaka spelar karaktärens HP
 }
 
 static int ECharacterEvade(PlayerCharacter pc, EnemyCharacter ec, out int evade) // kollar om fienden undvek
 {
     evade = 0;
-    if (ec.CharacterEvadeProbability < ec.CharacterEvadeChance) //
+
+    // prob kommer slumpa ett tal mellan 1 och 100 och om det är under eller lika med Chance så undviker karaktären
+    if (ec.CharacterEvadeProbability <= ec.CharacterEvadeChance) 
     {
         Console.WriteLine("Fienden undvek din attack");
         ec.CharacterHealth += pc.CharacterDamage - ec.CharacterArmor;
         evade = 1;
     }
-    return ec.CharacterHealth; //
+
+    return ec.CharacterHealth; // ger tillbaka fiende karaktärens HP
 }
 
-static void PlayerWin(ref Player p, ref Enemy e) //
+static void PlayerWin(ref Player p, ref Enemy e) // om spelaren vinner 
 {
-    e.EnemyHealth -= p.PlayerDamage; //
+    e.EnemyHealth -= p.PlayerDamage; // fienden tar skada från spelaren 
 
-    //
+    // vinst / förlust intäkt
     p.PlayerGold += 15;
     e.EnemyGold += 10;
 }
@@ -253,7 +261,7 @@ static void EnemyDamageUppgrade(ref Enemy e) // gör så att fienden gör mer DM
 
 static void Interest(ref Player p, ref Enemy e) // kollar om båda ska få ränta för pengarna de fåller
 {
-    for (int i = 1; i <= 10; i++) // upprepas tills man har fåt 10 guld eller 
+    for (int i = 1; i <= 10; i++) // upprepas tills man har fåt 10 guld eller det man ska få
     {
         if (p.PlayerGold / 10 >= i) // kollar om spelaren förtjänar ränta
         {

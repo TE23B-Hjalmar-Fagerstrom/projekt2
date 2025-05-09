@@ -1,6 +1,6 @@
 namespace PlayerAndCharacter
 {
-    public class Player
+    public class Player // alla spelarens variable 
     {
         public int PlayerHealth = 50;
         public int PlayerDamage = 1;
@@ -9,9 +9,9 @@ namespace PlayerAndCharacter
         public int hasSeenTutorial = -1;
     }
     
-    public class PlayerCharacter
+    public class PlayerCharacter // alla spelarkaraktärens variabler
     {
-        public int CharacterHealth = 0;
+        public int CharacterHealth = 100;
         public int CharacterMaxHealth = 100;
         public int CharacterDamage = 5;
         public int CharacterArmor = 0;

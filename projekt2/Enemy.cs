@@ -1,6 +1,6 @@
 namespace EnemyAndCharacter
 {
-    public class Enemy
+    public class Enemy // alla fiendens variabler 
     {
         public int EnemyHealth = 50;
         public int EnemyDamage = 1;
@@ -8,7 +8,7 @@ namespace EnemyAndCharacter
         public int EnemyGoldSpent = 0;
     }
 
-    public class EnemyCharacter
+    public class EnemyCharacter // alla fiende karaktärens variabler
     {
         public int CharacterHealth = 100;
         public int CharacterMaxHealth = 100;

@@ -2,7 +2,7 @@ jag tänker göra en 1v1 auto battler där man kan uppgrader sin karaktär efter
 
 man kommer få en vis mängd guld beroände på om man vinner (10-15 guld) eller förlorar (5-10 guld)
 
-man kommer kunna köpa mellan att få mer (skydd, skada, undiknings chans och hp)
+man kommer kunna köpa mellan att få mer (skydd, skada, undviknings chans och hp)
 
 alla saker kommer att kosta samma mängd guld (5-10 guld)
 
